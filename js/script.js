@@ -11,45 +11,21 @@ pageHeaderDiv.appendChild(studentSearchForm);
 studentSearchForm.appendChild(inputSearch);
 studentSearchForm.appendChild(searchButton);
 
-// Search Event
-studentSearchForm.addEventListener ('submit', (event) => {
-    const inputValue = inputSearch.value;
-    const studentList = document.querySelectorAll('.student-item');
+/**
+ * Event listener for studentSearchForm
+ * @param {KeyboardEvent: keyup}
+ * @listens keyup - Fires event when a key is released.
+ */
+studentSearchForm.addEventListener ('keyup', () => {
+    const studentNames = document.querySelectorAll('.student-details');
 
-    // Prevent the browser from refreshing on submit.
-    event.preventDefault();
-
-    // Clear search bar after submit.
-    inputSearch.value = '';
-
-    for ( let i = 0; i < studentList.length; i++ ) {
-        let studentName = studentList[i].children[0].children[1].textContent.split(' ');
-
-        if ( studentName.length === 3 ) {
-            studentName.splice(1, 1);
+    studentNames.forEach( student => {
+        if ( student.children[1].textContent.indexOf( inputSearch.value ) > -1 ) {
+            student.parentNode.style.display = 'list-item';
+        } else {
+            student.parentNode.style.display = 'none';
         }
-
-        switch ( inputValue.toUpperCase() ) {
-            case ( studentList[i].children[0].children[1].textContent.toUpperCase() ):
-            case ( studentName[0].toUpperCase() ):
-            case ( studentName[1].toUpperCase() ):
-                studentList[i].style.display = 'list-item';
-                studentList[i].style.border = 'none';
-                studentList[i].style.margin = '0';
-                studentList[i].style.padding = '0';
-                break;
-
-            case ( '' ):
-                studentList[i].style.display = 'list-item';
-                studentList[i].style.borderBottom = '1px solid #eaeaea';
-                studentList[i].style.margin = '0 0 20px 0';
-                studentList[i].style.padding = '0 0 20px 0';
-                break;
-
-            default:
-                studentList[i].style.display = 'none';
-        }
-    }
+    });
 })
 
 /**
