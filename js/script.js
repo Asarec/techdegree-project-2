@@ -12,13 +12,14 @@ studentSearchForm.appendChild(inputSearch);
 studentSearchForm.appendChild(searchButton);
 
 /**
- * Event listener for studentSearchForm
- * @param {KeyboardEvent: keyup}
- * @listens keyup - Fires event when a key is released.
+ * A function to filter and search through a list of students.
+ * @param {*} event
  */
-studentSearchForm.addEventListener ('keyup', () => {
+function studentSearch(event) {
     const studentNames = document.querySelectorAll('.student-details');
     const successfulMatches = [];
+
+    event.preventDefault();
 
     // Cycle through each student and compare key input with indexes of student string.
     studentNames.forEach( student => {
@@ -34,7 +35,11 @@ studentSearchForm.addEventListener ('keyup', () => {
 
     // Style last list item.
     successfulMatches[successfulMatches.length - 1].parentNode.setAttribute('style', 'display: list-item; border: none; margin: 0; padding: 0');
-})
+}
+
+// Call Functions with multiple events.
+studentSearchForm.addEventListener('submit', studentSearch);
+studentSearchForm.addEventListener('keyup', studentSearch);
 
 /**
  * Creates an element with the given parameters and returns it in HTML format.
