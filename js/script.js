@@ -1,61 +1,77 @@
-/** Selected Queries */
+// Retrieve .page-header div for search function.
 const pageHeaderDiv = document.querySelector('.page-header');
 
-/** Created Elements */
-const studentSearchForm = createElement({element: 'form', classSelector: 'student-search'});
-const inputSearch = createElement({element: 'input', attribute: 'placeholder', attributeValue: 'Search for students...'});
-const searchButton = createElement({element: 'button', attribute: 'type', attributeValue: 'submit', content: 'Search'});
+// Create elements to append for search.
+const studentSearchForm = createElement({
+    element: 'form',
+    classSelector: 'student-search',
+    parent: pageHeaderDiv
+});
 
-/** Appending Childs */
-pageHeaderDiv.appendChild(studentSearchForm);
-studentSearchForm.appendChild(inputSearch);
-studentSearchForm.appendChild(searchButton);
+const inputSearch = createElement({
+    element: 'input',
+    attribute: 'placeHolder',
+    attributeValue: 'Search for students...',
+    parent: studentSearchForm
+});
 
-/**
- * A function to filter and search through a list of students.
- * @param {*} event
- */
-function studentSearch(event) {
-    const studentNames = document.querySelectorAll('.student-details');
-    const successfulMatches = [];
+const searchButton = createElement({
+    element: 'button',
+    attribute: 'type',
+    attributeValue: 'submit',
+    content: 'Search',
+    parent: studentSearchForm
+});
 
-    event.preventDefault();
-
-    // Cycle through each student and compare key input with indexes of student string.
-    studentNames.forEach( student => {
-        if ( student.children[1].textContent.indexOf( inputSearch.value ) > -1 ) {
-            student.parentNode.setAttribute('style', 'display: list-item; border-bottom: 1px solid #eaeaea');
-
-            // Push successful matches to an array.
-            successfulMatches.push(student);
-        } else {
-            student.parentNode.setAttribute('style', 'display: none');
-        }
-    });
-
-    // Style last list item.
-    successfulMatches[successfulMatches.length - 1].parentNode.setAttribute('style', 'display: list-item; border: none; margin: 0; padding: 0');
-}
-
-// Call Functions with multiple events.
-studentSearchForm.addEventListener('submit', studentSearch);
-studentSearchForm.addEventListener('keyup', studentSearch);
+// Call function through event listener.
+studentSearchForm.addEventListener('keyup', searchStudents);
+studentSearchForm.addEventListener('submit', searchStudents);
 
 /**
  * Creates an element with the given parameters and returns it in HTML format.
- * @param {string} param.element - HTML Element
- * @param {string} param.classSelector - HTML Class Name
- * @param {string} param.attribute - HTML Attribute
- * @param {string} param.attributeValue - HTML Attribute Value
- * @return {HTMLElement}
+ *
+ * @param {string} param.element
+ * @param {string} param.classSelector
+ * @param {string} param.attribute
+ * @param {string} param.attributeValue
+ * @param {HTMLElement} param.parent
+ * @returns {HTMLElement}
  */
-function createElement({element, classSelector, attribute, attributeValue, content}) {
+function createElement({ element, classSelector, attribute, attributeValue, content, parent }) {
     const newElement = document.createElement(element);
 
-    // Checks parameters for additional HTML attributes.
+    // Check parameters for additional HTML attributes.
     if ( classSelector ) newElement.className = classSelector;
-    if ( attribute ) newElement.setAttribute(attribute, attributeValue);
+    if ( attribute ) newElement.setAttribute( attribute, attributeValue );
     if ( content ) newElement.textContent = content;
+    if ( parent ) parent.appendChild( newElement );
 
     return newElement;
+}
+
+/**
+ * Filters through the list of students.
+ *
+ * @param {event} event - The type of event to fire the function.
+ */
+function searchStudents( event ) {
+    const studentNames = document.querySelectorAll('.student-details h3');
+    const matches = [];
+
+    // Prevent browser refresh on submit.
+    event.preventDefault();
+
+    // Iterate through each student and compare values to inputSearch.
+    studentNames.forEach( student => {
+        if ( student.textContent.indexOf( inputSearch.value ) > -1 ) {
+            // Identify Successful Matches
+            student.closest('.student-item').setAttribute('data-match', 'true');
+            student.closest('.student-item').removeAttribute('style');
+
+            matches.push();
+        } else {
+            student.closest('.student-item').removeAttribute('data-match');
+            student.closest('.student-item').style.display = 'none';
+        }
+    });
 }
