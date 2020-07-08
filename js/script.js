@@ -1,7 +1,5 @@
-// Retrieve .page-header div for search function.
-const pageHeaderDiv = document.querySelector('.page-header');
+const pageHeaderDiv = document.querySelector( '.page-header' );
 
-// Create elements to append for search.
 const studentSearchForm = createElement({
     element: 'form',
     classSelector: 'student-search',
@@ -24,20 +22,20 @@ const searchButton = createElement({
 });
 
 const errorMessage = createElement({
-    element: 'h2',
+    element: 'h3',
     attribute: 'style',
-    attributeValue: 'display: none;',
+    attributeValue: 'display: none',
     content: 'No matches found.',
     sibling: pageHeaderDiv,
     position: 'afterend'
 });
 
-// Call function through event listener.
-studentSearchForm.addEventListener('keyup', searchStudents);
-studentSearchForm.addEventListener('submit', searchStudents);
+// Call studentSearchForm on specified event.
+studentSearchForm.addEventListener( 'keyup', searchStudents );
+studentSearchForm.addEventListener( 'submit', searchStudents );
 
 /**
- * Creates an element with the given parameters and returns it in HTML format.
+ * Creates an element with the given parameters and returns it as HTMLElement.
  *
  * @param {string} param.element
  * @param {string} param.classSelector
@@ -63,33 +61,42 @@ function createElement({ element, classSelector, attribute, attributeValue, cont
 
 /**
  * Filters through the list of students.
+ * Prints an error message on no matches found.
  *
- * @param {event} event - The type of event to fire the function.
+ * @param {event} event - The type of event to call the function.
  */
 function searchStudents( event ) {
-    const studentNames = document.querySelectorAll('.student-details h3');
+    const studentNames = document.querySelectorAll( '.student-details h3' );
     const matches = [];
+    let filterCheck = true;
 
-    // Prevent browser refresh on submit.
+    // Prevent browser refresh on submit event.
     event.preventDefault();
 
     // Iterate through each student and compare values to inputSearch.
     studentNames.forEach( student => {
         if ( student.textContent.indexOf( inputSearch.value ) > -1 ) {
-            // Identify Successful Matches
-            student.closest('.student-item').setAttribute('data-match', 'true');
-
             // Remove "display: none" if present.
-            student.closest('.student-item').removeAttribute('style');
+            student.closest( '.student-item' ).removeAttribute( 'style' );
 
-            // Push successful matches to the empty array.
-            matches.push(student);
+            // Push successful matches to the matches array.
+            matches.push( student );
+
+            // Store inputSearch.value for errorMessage check.
+            filterCheck = false;
         } else {
-            // Remove "data-match" if present.
-            student.closest('.student-item').removeAttribute('data-match');
-
             // Hide student from the list if no match is found.
-            student.closest('.student-item').style.display = 'none';
+            student.closest( '.student-item' ).style.display = 'none';
         }
     });
+
+    // Adjust style for last list item shown.
+    if ( matches.length ) matches[ matches.length - 1 ].closest('.student-item').setAttribute('style', 'margin: 0; padding: 0; border-bottom: none;');
+
+    // Display errorMessage on condition.
+    if ( inputSearch.value.length > 0 && filterCheck ) {
+        errorMessage.setAttribute('style', 'text-align: center; font-weight: bold; padding: 20px 0;');
+    } else {
+        errorMessage.setAttribute('style', 'display: none;');
+    }
 }
