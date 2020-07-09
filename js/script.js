@@ -1,8 +1,14 @@
 const studentList = document.querySelectorAll( '.student-item' );
 const itemsPerPage = 10;
 
+// Call default page results.
 pagination(studentList, 1);
+
+// Call pagination links.
 paginationLinks(studentList);
+
+// Call student search form.
+searchForm();
 
 /**
  * Hide student items except for the results displayed on a given page.
@@ -85,6 +91,80 @@ function linkEvent() {
             pagination( studentList, link.textContent );
         });
     });
+}
+
+/**
+ * Create and append the search form.
+ * addEventListeners to the newly created form.
+ */
+function searchForm() {
+    const form = createElement({
+        element: 'form',
+        classSelector: 'student-search',
+        parent: studentList[0].closest( '.page' ).firstElementChild
+    });
+
+    const input = createElement({
+        element: 'input',
+        attribute: 'placeholder',
+        attributeValue: 'Search for students...',
+        parent: form
+    });
+
+    const button = createElement({
+        element: 'button',
+        attribute: 'type',
+        attributeValue: 'submit',
+        content: 'Search',
+        parent: form
+    });
+
+    const errorMessage = createElement({
+        element: 'h3',
+        attribute: 'style',
+        attributeValue: 'display: none;',
+        content: 'No matches found.',
+        sibling: document.querySelector('.page-header'),
+        position: 'afterend'
+    });
+
+    // addEventListeners to the search form.
+    document.querySelector('.student-search').addEventListener('keyup', searchStudents);
+    document.querySelector('.student-search').addEventListener('submit', searchStudents);
+}
+
+function searchStudents( event ) {
+    const studentNames = document.querySelectorAll( '.student-details h3' );
+    const input = document.querySelector( '.student-search input' );
+    const matches = [];
+    let filterCheck = true;
+
+    // Prevent browser refresh on submit event.
+    event.preventDefault();
+
+    // Iterate through each student and compare values to the input.
+    studentNames.forEach( student => {
+        if ( student.textContent.indexOf( input.value ) > -1 ) {
+            // Remove "display: none" if present.
+            student.closest( '.student-item' ).removeAttribute( 'style' );
+
+            // Push successful matches to the matches array.
+            matches.push( student );
+
+            // Change boolean value to ensure errorMessage does not print.
+            filterCheck = false;
+        } else {
+            // Hide student from the list if no match is found.
+            student.closest( '.student-item' ).style.display = 'none';
+        }
+    });
+
+    // Display errorMessage on condition.
+    if ( input.value.length > 0 && filterCheck ) {
+        document.querySelector('.page > h3').setAttribute( 'style', 'text-align: center; font-weight: bold; padding: 20px 0;' );
+    } else {
+        document.querySelector('.page > h3').setAttribute( 'style', 'display: none;' );
+    }
 }
 
 /**
