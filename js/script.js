@@ -1,38 +1,91 @@
-const pageHeaderDiv = document.querySelector( '.page-header' );
+const studentList = document.querySelectorAll( '.student-item' );
+const itemsPerPage = 10;
 
-const studentSearchForm = createElement({
-    element: 'form',
-    classSelector: 'student-search',
-    parent: pageHeaderDiv
-});
+pagination(studentList, 1);
+paginationLinks(studentList);
 
-const inputSearch = createElement({
-    element: 'input',
-    attribute: 'placeHolder',
-    attributeValue: 'Search for students...',
-    parent: studentSearchForm
-});
+/**
+ * Hide student items except for the results displayed on a given page.
+ *
+ * @param {Array} list - Array of students to show.
+ * @param {Number} page - Indicates page number.
+ */
+function pagination( list, page ) {
+    const startIndex = ( page * itemsPerPage ) - itemsPerPage;
+    const endIndex = page * itemsPerPage;
 
-const searchButton = createElement({
-    element: 'button',
-    attribute: 'type',
-    attributeValue: 'submit',
-    content: 'Search',
-    parent: studentSearchForm
-});
+    // Show and hide based on start and end indexes.
+    for ( let i = 0; i < list.length; i++ ) {
+        i >= startIndex && i < endIndex ? list[i].removeAttribute( 'style' ) : list[i].style.display = 'none';
+    }
+}
 
-const errorMessage = createElement({
-    element: 'h3',
-    attribute: 'style',
-    attributeValue: 'display: none',
-    content: 'No matches found.',
-    sibling: pageHeaderDiv,
-    position: 'afterend'
-});
+/**
+ * Create and append the pagination links to the DOM.
+ * @param {NodeList} list - List of students.
+ */
+function paginationLinks( list ) {
+    const pageDiv = studentList[0].closest( '.page' );
 
-// Call studentSearchForm on specified event.
-studentSearchForm.addEventListener( 'keyup', searchStudents );
-studentSearchForm.addEventListener( 'submit', searchStudents );
+    const paginationDiv = createElement({
+        element: 'div',
+        classSelector: 'pagination',
+        parent: pageDiv
+    });
+
+    const pageList = createElement({
+        element: 'ul',
+        parent: paginationDiv
+    });
+
+    // Create and append li and a elements.
+    for ( let i = 1; i <= Math.ceil( list.length / itemsPerPage ); i++ ) {
+        const li = createElement({
+            element: 'li',
+            parent: pageList
+        });
+
+        const a = createElement({
+            element: 'a',
+            attribute: 'href',
+            attributeValue: '#',
+            content: i,
+            parent: li
+        });
+    }
+
+    // Initial Active Link
+    document.querySelector('.pagination a').className = 'active';
+
+    // Call anchor element events.
+    linkEvent();
+}
+
+/**
+ * Events for clicking on pagination links.
+ */
+function linkEvent() {
+    const pageLinks = document.querySelectorAll('.pagination a');
+
+    // Iterate through the links and addEventListener.
+    pageLinks.forEach( link => {
+        link.addEventListener( 'click', ( event ) => {
+            // Prevent browser refresh.
+            event.preventDefault();
+
+            // Iterate through the links and remove active class.
+            for ( let i = 0; i < pageLinks.length; i++ ) {
+                pageLinks[i].removeAttribute( 'class' );
+            }
+
+            // Add .active class to clicked link.
+            link.className = 'active';
+
+            // Call page results using link text content.
+            pagination( studentList, link.textContent );
+        });
+    });
+}
 
 /**
  * Creates an element with the given parameters and returns it as HTMLElement.
@@ -47,7 +100,7 @@ studentSearchForm.addEventListener( 'submit', searchStudents );
  * @returns {HTMLElement}
  */
 function createElement({ element, classSelector, attribute, attributeValue, content, parent, sibling, position }) {
-    const newElement = document.createElement(element);
+    const newElement = document.createElement( element );
 
     // Check parameters for additional HTML attributes.
     if ( classSelector ) newElement.className = classSelector;
@@ -57,46 +110,4 @@ function createElement({ element, classSelector, attribute, attributeValue, cont
     if ( sibling ) sibling.insertAdjacentElement( position, newElement );
 
     return newElement;
-}
-
-/**
- * Filters through the list of students.
- * Prints an error message on no matches found.
- *
- * @param {event} event - The type of event to call the function.
- */
-function searchStudents( event ) {
-    const studentNames = document.querySelectorAll( '.student-details h3' );
-    const matches = [];
-    let filterCheck = true;
-
-    // Prevent browser refresh on submit event.
-    event.preventDefault();
-
-    // Iterate through each student and compare values to inputSearch.
-    studentNames.forEach( student => {
-        if ( student.textContent.indexOf( inputSearch.value ) > -1 ) {
-            // Remove "display: none" if present.
-            student.closest( '.student-item' ).removeAttribute( 'style' );
-
-            // Push successful matches to the matches array.
-            matches.push( student );
-
-            // Store inputSearch.value for errorMessage check.
-            filterCheck = false;
-        } else {
-            // Hide student from the list if no match is found.
-            student.closest( '.student-item' ).style.display = 'none';
-        }
-    });
-
-    // Adjust style for last list item shown.
-    if ( matches.length ) matches[ matches.length - 1 ].closest('.student-item').setAttribute('style', 'margin: 0; padding: 0; border-bottom: none;');
-
-    // Display errorMessage on condition.
-    if ( inputSearch.value.length > 0 && filterCheck ) {
-        errorMessage.setAttribute('style', 'text-align: center; font-weight: bold; padding: 20px 0;');
-    } else {
-        errorMessage.setAttribute('style', 'display: none;');
-    }
 }

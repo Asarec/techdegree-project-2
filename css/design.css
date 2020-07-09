@@ -103,6 +103,7 @@ body{
  
   .pagination li{
     display: inline;
+    margin-right: 4px;
   }
 
     .pagination li a{
