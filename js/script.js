@@ -26,7 +26,7 @@ function displayedResults( list, page ) {
     }
 
     // Adjust last item style to fit design.
-    list[endIndex].setAttribute('style', 'margin: 0; padding: 0; border: none;');
+    list[endIndex - 1].setAttribute('style', 'margin: 0; padding: 0; border: none;');
 }
 
 /**
@@ -186,7 +186,7 @@ function searchStudents( event ) {
         displayedResults( matches, 1 );
     } else {
         // Remove current pagination links.
-        document.querySelector('.pagination').remove();
+        if ( document.querySelector('.pagination') !== null ) document.querySelector('.pagination').remove();
 
         // Show error message.
         document.querySelector('.js-searchError').setAttribute('style', 'text-align: center; padding: 20px 0; font-weight: bold;');
