@@ -10,7 +10,6 @@ paginationLinks( studentList );
 // Call and display search form.
 searchForm();
 
-
 /**
  * Hide or show students based on active pagination link.
  *
@@ -172,9 +171,9 @@ function searchStudents( event ) {
         // Hide error message.
         document.querySelector('.js-searchError').setAttribute('style', 'display: none;');
 
-        // Display initial results.
-        displayedResults( studentList, 1 );
+        // Display default initial results.
         paginationLinks( studentList );
+        displayedResults( studentList, 1 );
     } else if ( matches.length && searchInput.value.length > 0 ) {
         // Remove current pagination links.
         if ( document.querySelector('.pagination') !== null ) document.querySelector('.pagination').remove();
@@ -182,9 +181,9 @@ function searchStudents( event ) {
         // Hide error message.
         document.querySelector('.js-searchError').setAttribute('style', 'display: none;');
 
-        // Display matching results.
-        displayedResults( matches, 1 );
+        // Display pagination links and matching results.
         paginationLinks( matches );
+        displayedResults( matches, 1 );
     } else {
         // Remove current pagination links.
         document.querySelector('.pagination').remove();
