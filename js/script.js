@@ -189,7 +189,7 @@ function searchStudents( event ) {
         document.querySelector('.pagination').remove();
 
         // Show error message.
-        document.querySelector('.js-searchError').removeAttribute('style');
+        document.querySelector('.js-searchError').setAttribute('style', 'text-align: center; padding: 20px 0; font-weight: bold;');
     }
 }
 
