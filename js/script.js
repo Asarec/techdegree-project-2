@@ -26,7 +26,11 @@ function displayedResults( list, page ) {
     }
 
     // Adjust last item style to fit design.
-    list[endIndex - 1].setAttribute('style', 'margin: 0; padding: 0; border: none;');
+    if ( list.length < 10 ) {
+        list[list.length - 1].setAttribute('style', 'margin: 0; padding: 0; border: none;');
+    } else {
+        list[endIndex - 1].setAttribute('style', 'margin: 0; padding: 0; border: none;')
+    }
 }
 
 /**
