@@ -22,14 +22,7 @@ function displayedResults( list, page ) {
 
     // Show and hide students based on start and end indexes.
     for ( let i = 0; i < list.length; i++ ) {
-        i >= startIndex && i < endIndex ? list[i].removeAttribute('style') : list[i].style.display = 'none';
-    }
-
-    // Adjust last item style to fit design.
-    if ( list.length < 10 ) {
-        list[list.length - 1].setAttribute('style', 'margin: 0; padding: 0; border: none;');
-    } else {
-        list[endIndex - 1].setAttribute('style', 'margin: 0; padding: 0; border: none;')
+        i >= startIndex && i < endIndex ? list[i].removeAttribute('style') : list[i].setAttribute('style', 'display: none;');
     }
 }
 
